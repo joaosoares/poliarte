@@ -1,0 +1,96 @@
+div(ng-include='"components/navbar/navbar.html"')
+
+//- header#banner.hero-unit
+//-   .container
+//-     h1 'Allo, 'Allo!
+//-     p.lead Kick-start your next web app with Angular Fullstack
+//-     img(src='assets/images/yeoman.png', alt='I\'m Yeoman')
+
+
+.container
+  .row(ng-if='!ready')
+    .col-xs-12.col-sm-6.col-sm-offset-3.text-center
+      p.lead Carregando
+        = ' '
+        i.fa.fa-spinner.fa-spin
+  .row(ng-if='ready')
+    .col-xs-12.col-sm-7.col-sm-push-5
+      .row
+        .col-sm-7
+          h2 {{video.current.title}}
+          p.lead Enviado por {{video.current.author}}, {{video.current.likes}} curtidas
+        .col-sm-5
+          #controls.btn-group.btn-group-lg
+            button.btn.btn-primary(ng-click='previousVideo(video.current)')
+              span.glyphicon.glyphicon-backward
+            button.btn.btn-default(ng-click='playVideo()')
+              span.glyphicon.glyphicon-play
+            button.btn.btn-default(ng-click='pauseVideo()')
+              span.glyphicon.glyphicon-pause
+            button.btn.btn-default(ng-click='nextVideo(video.current)')
+              span.glyphicon.glyphicon-forward
+
+      youtube-video(video-url='video.current.url' player='video.player' player-width='\'100%\'')
+      blockquote
+        p {{video.current.message}}
+    #videolist.col-xs-12.col-sm-5.col-sm-pull-7
+      h2 Vídeos
+      p Ordenar por
+        = ' '
+        select(ng-model='sortOrder' ng-options='opt.label for opt in sortOptions')
+
+        span(ng-show='sortOrder == \'-likes\'')
+          = ' neste '
+          select(ng-model='timeRange')
+            option(value='dia') dia
+            option(value='mes') mês
+        = '  '
+        label
+          input(type='checkbox' ng-model='filterCategory' ng-true-value='\'Music\'' ng-false-value='\'\'')
+          = ' '
+          | apenas músicas
+
+      .list-group
+        a.list-group-item(ng-repeat='link in links | orderBy:sortOrder.value | filter:{category:filterCategory}' ng-class='{active: link.active}' ng-click='changeVideo(link)')
+          //- img(src='{{link.thumbnailUrl}}')
+          h4 {{link.title}}
+          p Enviado
+            = ' '
+            span(am-time-ago='link.created_time')
+            |  por {{link.author}}
+            br
+            ng-pluralize(count='link.likes' when='likesPlural')
+
+script.
+  $(document).ready(function () {
+    $('[data-toggle="offcanvas"]').click(function () {
+      $('.row-offcanvas').toggleClass('active');
+    });
+  });
+
+
+//- .container
+//-   .row
+//-     .col-lg-12
+//-       h1.page-header Features:
+//-       ul.nav.nav-tabs.nav-stacked.col-md-4.col-lg-4.col-sm-6(ng-repeat='thing in awesomeThings')
+//-         li
+//-           a(href='#', tooltip='{{thing.info}}')
+//-             | {{thing.name}}
+//-             button.close(type='button', ng-click='deleteThing(thing)') ×
+//-
+//-   form.thing-form
+//-     label Syncs in realtime across clients
+//-     p.input-group
+//-       input.form-control(type='text', placeholder='Add a new thing here.', ng-model='newThing')
+//-       span.input-group-btn
+//-         button.btn.btn-primary(type='submit', ng-click='addThing()') Add New
+
+footer.footer
+  .container
+    p
+      | João Soares 2014
+      = ' | '
+      | Desenvolvido com
+      = ' '
+      a(href='https://github.com/DaftMonk/generator-angular-fullstack/') angular-fullstack
